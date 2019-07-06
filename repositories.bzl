@@ -61,3 +61,10 @@ def depot_repositories():
       strip_prefix = "grpc-java-1.20.0",
       urls = ["https://github.com/grpc/grpc-java/archive/v1.20.0.zip"],
   )
+
+  http_archive(
+      name = "googleapis",
+      strip_prefix = "googleapis-common-protos-1_3_1/",
+      url = "https://github.com/googleapis/googleapis/archive/common-protos-1_3_1.zip",
+      build_file = "@//:BUILD.googleapis",
+  )

@@ -4,6 +4,7 @@ option java_multiple_files = true;
 option java_package = "realworld.proto";
 option java_outer_classname = "RealworldProto";
 
+import 'google/api/annotations.proto';
 import 'google/protobuf/empty.proto';
 import 'google/protobuf/timestamp.proto';
 
@@ -12,46 +13,128 @@ package realworld;
 // The realworld service definition.
 service RealworldService {
   /** === USER APIS === */
-  rpc LoginUser(LoginRequest) returns (User) {}
+  rpc LoginUser(LoginRequest) returns (User) {
+    option (google.api.http) = {
+      post: "/api/users/login"
+      body: "*"
+    };
+  }
 
-  rpc RegisterUser(RegisterRequest) returns (User) {}
+  rpc RegisterUser(RegisterRequest) returns (User) {
+    option (google.api.http) = {
+      post: "/api/users"
+      body: "*"
+    };
+  }
 
-  rpc GetUser(google.protobuf.Empty) returns (User) {}
+  rpc GetUser(google.protobuf.Empty) returns (User) {
+    option (google.api.http) = {
+      get: "/api/user"
+    };
+  }
 
-  rpc UpdateUser(UpdateUserRequest) returns (User) {}
+  rpc UpdateUser(UpdateUserRequest) returns (User) {
+    option (google.api.http) = {
+      put: "/api/user"
+      body: "*"
+    };
+  }
 
   /** === PROFILE APIS === */
-  rpc GetProfile(GetProfileRequest) returns (Profile) {}
+  rpc GetProfile(GetProfileRequest) returns (Profile) {
+    option (google.api.http) = {
+      get: "/api/profiles/{username=*}"
+    };
+  }
 
-  rpc FollowProfile(FollowProfileRequest) returns (Profile) {}
+  rpc FollowProfile(FollowProfileRequest) returns (Profile) {
+    option (google.api.http) = {
+      post: "/api/profiles/{username=*}/follow"
+    };
+  }
 
-  rpc UnfollowProfile(UnfollowProfileRequest) returns (Profile) {}
+  rpc UnfollowProfile(UnfollowProfileRequest) returns (Profile) {
+    option (google.api.http) = {
+      delete: "/api/profiles/{username=*}/follow"
+    };
+  }
 
   /** === ARTICLE APIS === */
-  rpc ListArticles(ListArticlesRequest) returns (ArticlesResponse) {}
+  rpc ListArticles(ListArticlesRequest) returns (ArticlesResponse) {
+    option (google.api.http) = {
+      get: "/api/articles"
+    };
+  }
   
-  rpc FeedArticles(FeedArticlesRequest) returns (ArticlesResponse) {}
+  rpc FeedArticles(FeedArticlesRequest) returns (ArticlesResponse) {
+    option (google.api.http) = {
+      get: "/api/articles/feed"
+    };
+  }
 
-  rpc GetArticle(GetArticleRequest) returns (Article) {}
+  rpc GetArticle(GetArticleRequest) returns (Article) {
+    option (google.api.http) = {
+      get: "/api/articles/{slug=*}"
+    };
+  }
 
-  rpc CreateArticle(CreateArticleRequest) returns (Article) {}
+  rpc CreateArticle(CreateArticleRequest) returns (Article) {
+    option (google.api.http) = {
+      post: "/api/articles"
+      body: "*"
+    };
+  }
 
-  rpc UpdateArticle(UpdateArticleRequest) returns (Article) {}
+  rpc UpdateArticle(UpdateArticleRequest) returns (Article) {
+    option (google.api.http) = {
+      put: "/api/articles/{slug=*}"
+      body: "*"
+    };
+  }
 
-  rpc DeleteArticle(DeleteArticleRequest) returns (google.protobuf.Empty) {}
+  rpc DeleteArticle(DeleteArticleRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/api/articles/{slug=*}"
+    };
+  }
 
-  rpc FavoriteArticle(FavoriteArticleRequest) returns (Article) {}
+  rpc FavoriteArticle(FavoriteArticleRequest) returns (Article) {
+    option (google.api.http) = {
+      post: "/api/articles/{slug=*}/favorite"
+    };
+  }
 
-  rpc UnfavoriteArticle(UnfavoriteArticleRequest) returns (Article) {}
+  rpc UnfavoriteArticle(UnfavoriteArticleRequest) returns (Article) {
+    option (google.api.http) = {
+      delete: "/api/articles/{slug=*}/favorite"
+    };
+  }
 
-  rpc AddComment(AddCommentRequest) returns (Comment) {}
+  rpc AddComment(AddCommentRequest) returns (Comment) {
+    option (google.api.http) = {
+      post: "/api/articles/{slug=*}/comments"
+      body: "*"
+    };
+  }
 
-  rpc ListComments(ListCommentsRequest) returns (CommentsResponse) {}
+  rpc ListComments(ListCommentsRequest) returns (CommentsResponse) {
+    option (google.api.http) = {
+      get: "/api/articles/{slug=*}/comments"
+    };
+  }
 
-  rpc DeleteComment(DeleteCommentRequest) returns (google.protobuf.Empty) {}
+  rpc DeleteComment(DeleteCommentRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/api/articles/{slug=*}/comments/{id=*}"
+    };
+  }
 
   /** === TAG APIS === */
-  rpc ListTags(google.protobuf.Empty) returns (TagsResponse) {}
+  rpc ListTags(google.protobuf.Empty) returns (TagsResponse) {
+    option (google.api.http) = {
+      get: "/api/tags"
+    };
+  }
 }
 
 /** === RESOURCES === */

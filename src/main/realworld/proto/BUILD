@@ -6,6 +6,7 @@ proto_library(
     name = "realworld_proto",
     srcs = glob(["*.proto"]),
     deps = [
+        "@googleapis//:annotations_proto",
         "@com_google_protobuf//:empty_proto",
         "@com_google_protobuf//:timestamp_proto",
     ],
