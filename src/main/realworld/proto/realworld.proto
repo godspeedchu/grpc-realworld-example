@@ -8,32 +8,32 @@ import 'google/api/annotations.proto';
 import 'google/protobuf/empty.proto';
 import 'google/protobuf/timestamp.proto';
 
-package realworld;
+package realworld.proto;
 
 // The realworld service definition.
 service RealworldService {
   /** === USER APIS === */
-  rpc LoginUser(LoginRequest) returns (User) {
+  rpc LoginUser(LoginRequest) returns (UserResponse) {
     option (google.api.http) = {
       post: "/api/users/login"
       body: "*"
     };
   }
 
-  rpc RegisterUser(RegisterRequest) returns (User) {
+  rpc RegisterUser(RegisterRequest) returns (UserResponse) {
     option (google.api.http) = {
       post: "/api/users"
       body: "*"
     };
   }
 
-  rpc GetUser(google.protobuf.Empty) returns (User) {
+  rpc GetUser(google.protobuf.Empty) returns (UserResponse) {
     option (google.api.http) = {
       get: "/api/user"
     };
   }
 
-  rpc UpdateUser(UpdateUserRequest) returns (User) {
+  rpc UpdateUser(UpdateUserRequest) returns (UserResponse) {
     option (google.api.http) = {
       put: "/api/user"
       body: "*"
@@ -41,19 +41,19 @@ service RealworldService {
   }
 
   /** === PROFILE APIS === */
-  rpc GetProfile(GetProfileRequest) returns (Profile) {
+  rpc GetProfile(GetProfileRequest) returns (ProfileResponse) {
     option (google.api.http) = {
       get: "/api/profiles/{username=*}"
     };
   }
 
-  rpc FollowProfile(FollowProfileRequest) returns (Profile) {
+  rpc FollowProfile(FollowProfileRequest) returns (ProfileResponse) {
     option (google.api.http) = {
       post: "/api/profiles/{username=*}/follow"
     };
   }
 
-  rpc UnfollowProfile(UnfollowProfileRequest) returns (Profile) {
+  rpc UnfollowProfile(UnfollowProfileRequest) returns (ProfileResponse) {
     option (google.api.http) = {
       delete: "/api/profiles/{username=*}/follow"
     };
@@ -72,20 +72,20 @@ service RealworldService {
     };
   }
 
-  rpc GetArticle(GetArticleRequest) returns (Article) {
+  rpc GetArticle(GetArticleRequest) returns (ArticleResponse) {
     option (google.api.http) = {
       get: "/api/articles/{slug=*}"
     };
   }
 
-  rpc CreateArticle(CreateArticleRequest) returns (Article) {
+  rpc CreateArticle(CreateArticleRequest) returns (ArticleResponse) {
     option (google.api.http) = {
       post: "/api/articles"
       body: "*"
     };
   }
 
-  rpc UpdateArticle(UpdateArticleRequest) returns (Article) {
+  rpc UpdateArticle(UpdateArticleRequest) returns (ArticleResponse) {
     option (google.api.http) = {
       put: "/api/articles/{slug=*}"
       body: "*"
@@ -98,19 +98,19 @@ service RealworldService {
     };
   }
 
-  rpc FavoriteArticle(FavoriteArticleRequest) returns (Article) {
+  rpc FavoriteArticle(FavoriteArticleRequest) returns (ArticleResponse) {
     option (google.api.http) = {
       post: "/api/articles/{slug=*}/favorite"
     };
   }
 
-  rpc UnfavoriteArticle(UnfavoriteArticleRequest) returns (Article) {
+  rpc UnfavoriteArticle(UnfavoriteArticleRequest) returns (ArticleResponse) {
     option (google.api.http) = {
       delete: "/api/articles/{slug=*}/favorite"
     };
   }
 
-  rpc AddComment(AddCommentRequest) returns (Comment) {
+  rpc AddComment(AddCommentRequest) returns (CommentResponse) {
     option (google.api.http) = {
       post: "/api/articles/{slug=*}/comments"
       body: "*"
@@ -140,11 +140,11 @@ service RealworldService {
 /** === RESOURCES === */
 message User {
   string email = 1;
-  string token = 2;
-  string username = 3;
-  string bio = 4;
-  string image = 5;
-  string password = 6;
+  string username = 2;
+  string bio = 3;
+  string image = 4;
+  string password = 5;
+  string token = 6;
 }
 
 message Profile {
@@ -188,6 +188,10 @@ message UpdateUserRequest {
   User user = 1;
 }
 
+message UserResponse {
+  User user = 1;
+}
+
 message GetProfileRequest {
   string username = 1;
 }
@@ -198,6 +202,10 @@ message FollowProfileRequest {
 
 message UnfollowProfileRequest {
   string username = 1;
+}
+
+message ProfileResponse {
+  Profile profile = 1;
 }
 
 message ListArticlesRequest {
@@ -242,9 +250,17 @@ message UnfavoriteArticleRequest {
   string slug = 1;
 }
 
+message ArticleResponse {
+  Article article = 1;
+}
+
 message AddCommentRequest {
   string slug = 1;
   Comment comment = 2;
+}
+
+message CommentResponse {
+  Comment comment = 1;
 }
 
 message ListCommentsRequest {
