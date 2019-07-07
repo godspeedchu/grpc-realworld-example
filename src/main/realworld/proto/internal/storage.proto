@@ -29,3 +29,11 @@ message DbArticle {
   google.protobuf.Timestamp updated_at = 8;
   string author_id = 9;
 }
+
+message DbComment {
+  string id = 1;
+  string body = 2;
+  google.protobuf.Timestamp created_at = 3;
+  google.protobuf.Timestamp updated_at = 4;
+  string author_id = 5;
+}

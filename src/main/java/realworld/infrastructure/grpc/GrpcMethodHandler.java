@@ -13,15 +13,15 @@ public final class GrpcMethodHandler<Request extends Message, Response extends M
   private final Logger logger = Logger.getLogger(GrpcMethodHandler.class.getName());
 
   private final GrpcRequestValidator<Request> validator;
-  private final GrpcApi<Request, Response> api;
+  private final GrpcRequestProcessor<Request, Response> processor;
   private final Executor executor;
 
   public GrpcMethodHandler(
     GrpcRequestValidator<Request> validator,
-    GrpcApi<Request, Response> api,
+    GrpcRequestProcessor<Request, Response> processor,
     Executor executor) {
     this.validator = validator;
-    this.api = api;
+    this.processor = processor;
     this.executor = executor;
   }
 
@@ -29,7 +29,7 @@ public final class GrpcMethodHandler<Request extends Message, Response extends M
     try {
       validator.validate(request);
       Futures.addCallback(
-          api.execute(request),
+          processor.execute(request),
           new FutureCallback<Response>() {
             public void onSuccess(Response response) {
               Context.current().run(() -> {
@@ -38,14 +38,14 @@ public final class GrpcMethodHandler<Request extends Message, Response extends M
               });
             }
             public void onFailure(Throwable t) {
-              System.out.println("exception!!");
+              logger.severe("exception " + t);
               Context.current().run(() -> streamObserver.onError(t));
             }
           },
           executor);
     }
     catch (Exception e) {
-      System.out.println("exception!!");
+      logger.severe("exception " + e);
       streamObserver.onError(e);
     }
   }

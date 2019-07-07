@@ -1,13 +1,13 @@
 package(default_visibility = ["//visibility:public"])
 
 java_library(
-    name = "api",
+    name = "processors",
     srcs = glob(["*.java"]),
     deps = [
         "@aopalliance//jar",
         "@com_google_guava_guava//jar",
         "@com_google_inject_guice//jar",
-        "@io_grpc_grpc_java//core",
+        "@com_google_protobuf//:protobuf_java",
         "@io_grpc_grpc_java//stub",
         "@javax_inject//jar",
         "//src/main/realworld/proto:realworld_java_grpc",

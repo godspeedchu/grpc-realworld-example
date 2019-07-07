@@ -2,8 +2,8 @@ package realworld.core.dao;
 
 import com.google.common.collect.ImmutableList;
 import java.util.Optional;
-import realworld.proto.Comment;
 import realworld.proto.internal.DbArticle;
+import realworld.proto.internal.DbComment;
 
 // DAO interface for articles, comments, and tags.
 public interface ArticleDao {
@@ -18,17 +18,23 @@ public interface ArticleDao {
 
   void deleteArticle(String articleId);
 
+  boolean isFavoriteArticle(String userId, String articleId);
+
   DbArticle favoriteArticle(String userId, String articleId);
 
   DbArticle unfavoriteArticle(String userId, String articleId);
 
+  int getArticleFavoriteCount(String articleId);
+
   ImmutableList<DbArticle> listArticles();
 
-  Comment createComment(String slug, Comment comment);
+  ImmutableList<DbArticle> feedArticles(String userId);
 
-  ImmutableList<Comment> listComments(String slug);
+  DbComment createComment(String articleId, DbComment comment);
 
-  void deleteComment(String slug, String id);
+  ImmutableList<DbComment> listComments(String articleId);
+
+  void deleteComment(String articleId, String commentId);
 
   ImmutableList<String> listTags();
 }

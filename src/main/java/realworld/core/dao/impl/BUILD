@@ -21,6 +21,7 @@ java_library(
         "//src/main/realworld/proto/internal:internal_java_proto",
         "//src/main/java/realworld/core/dao",
         "@com_google_guava_guava//jar",
+        "@com_google_inject_guice//jar",
         "@com_google_protobuf//:protobuf_java",
     ],
 )

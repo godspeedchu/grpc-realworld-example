@@ -24,7 +24,7 @@ public final class DummyJwtUtil {
       .setSubject(userId)
       .setExpireAt(expireAt)
       .build();
-    return Base64.getUrlEncoder().withoutPadding().encodeToString(jwt.toByteArray());
+    return Base64.getUrlEncoder().encodeToString(jwt.toByteArray());
   }
 
   public static Optional<String> fromToken(String token) {
@@ -36,6 +36,8 @@ public final class DummyJwtUtil {
       }
       return Optional.of(jwt.getSubject());
     } catch (InvalidProtocolBufferException e) {
+      return Optional.empty();
+    } catch (NullPointerException e) {
       return Optional.empty();
     }
   }

@@ -32,7 +32,7 @@ public final class ClientAuthInterceptor implements ClientInterceptor {
       public void start(Listener<RespT> responseListener, Metadata headers) {
         if (!Strings.isNullOrEmpty(key)) {
           System.out.println("putting key " + key);
-          headers.put(Constants.METADATA_KEY, key);
+          headers.put(Constants.METADATA_AUTHORIZATION_KEY, key);
         }
         super.start(new SimpleForwardingClientCallListener<RespT>(responseListener) {}, headers);
       }

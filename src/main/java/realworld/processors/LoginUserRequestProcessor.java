@@ -1,45 +1,46 @@
-package realworld.api;
+package realworld.processors;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
+import com.google.protobuf.StringValue;
 import java.util.Optional;
 import realworld.core.auth.DummyJwtUtil;
 import realworld.core.dao.UserDao;
-import realworld.infrastructure.exceptions.NotFoundException;
-import realworld.infrastructure.grpc.GrpcApi;
+import realworld.infrastructure.exceptions.ExceptionUtil;
+import realworld.infrastructure.grpc.GrpcRequestProcessor;
 import realworld.proto.LoginRequest;
 import realworld.proto.User;
 import realworld.proto.UserResponse;
 import realworld.proto.internal.DbUser;
 
-class LoginUserGrpcApi implements GrpcApi<LoginRequest, UserResponse> {
+class LoginUserRequestProcessor implements GrpcRequestProcessor<LoginRequest, UserResponse> {
 
   private final UserDao userDao;
 
   @Inject
-  LoginUserGrpcApi(UserDao userDao) {
+  LoginUserRequestProcessor(UserDao userDao) {
     this.userDao = userDao;
   }
 
   @Override
   public ListenableFuture<UserResponse> execute(LoginRequest request) {
-    Optional<DbUser> userOptional = userDao.getUserByEmail(request.getUser().getEmail());
+    Optional<DbUser> userOptional = userDao.getUserByEmail(request.getUser().getEmail().getValue());
     if (!userOptional.isPresent()) {
-      throw new NotFoundException("user not found.");
+      throw ExceptionUtil.notFound("user not found.");
     }
     DbUser user = userOptional.get();
-    if (user.getPasswordHash().equals(hashFunc(request.getUser().getPassword()))) {
+    if (user.getPasswordHash().equals(hashFunc(request.getUser().getPassword().getValue()))) {
       return Futures.immediateFuture(UserResponse.newBuilder()
           .setUser(User.newBuilder()
-            .setEmail(user.getEmail())
+            .setEmail(StringValue.of(user.getEmail()))
             .setToken(DummyJwtUtil.toToken(user.getId()))
-            .setUsername(user.getUsername())
-            .setBio(user.getBio())
-            .setImage(user.getImage()))
+            .setUsername(StringValue.of(user.getUsername()))
+            .setBio(StringValue.of(user.getBio()))
+            .setImage(StringValue.of(user.getImage())))
           .build());
     } else {
-      throw new NotFoundException("incorrect email or password.");
+      throw ExceptionUtil.notFound("incorrect email or password.");
     }
   }
 
