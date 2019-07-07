@@ -77,9 +77,11 @@ public final class GrpcServerModule extends AbstractModule {
   private static class GrpcServerService extends AbstractIdleService {
 
     private final Server server;
+    private final int port;
 
     @Inject
     GrpcServerService(
+        @NettyGrpcConf int port,
         ServerBuilder<?> builder,
         Set<BindableService> services,
         Set<ServerInterceptor> serverInterceptors) {
@@ -88,19 +90,21 @@ public final class GrpcServerModule extends AbstractModule {
           .intercept(service, ImmutableList.copyOf(serverInterceptors));
         builder.addService(withInterceptors);
       });
+      this.port = port;
       this.server = builder.build();
     }
 
     @Override
     protected void startUp() throws Exception {
       server.start();
+      System.out.println("Starting to listen at port " + port);
     }
 
     @Override
     protected void shutDown() throws Exception {
       server.shutdownNow();
       if (!server.awaitTermination(5, TimeUnit.SECONDS)) {
-        System.err.println("Timed out waitinf for server shutdown.");
+        System.err.println("Timed out waiting for server shutdown.");
       }
     }
   }

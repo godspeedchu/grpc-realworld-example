@@ -9,6 +9,7 @@ proto_library(
         "@googleapis//:annotations_proto",
         "@com_google_protobuf//:empty_proto",
         "@com_google_protobuf//:timestamp_proto",
+        "@com_google_protobuf//:wrappers_proto",
     ],
 )
 
@@ -21,4 +22,17 @@ java_grpc_library(
     name = "realworld_java_grpc",
     srcs = [":realworld_proto"],
     deps = [":realworld_java_proto"],
+)
+
+genrule(
+    name = "realworld_descriptorset",
+    srcs = glob(["*.proto"]) + [
+        "@googleapis//:google/api/annotations.proto",
+        "@com_google_protobuf//:empty_proto",
+    ],
+    outs = ["realworld.pb"],
+    cmd = "$(location @com_google_protobuf//:protoc) " +
+          "--descriptor_set_out=$@ " +
+          "--include_imports --include_source_info $(SRCS)",
+    tools = ["@com_google_protobuf//:protoc"],
 )

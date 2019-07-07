@@ -1,7 +1,7 @@
 package realworld.core.dao;
 
+import com.google.common.collect.ImmutableList;
 import java.util.Optional;
-import realworld.proto.Profile;
 import realworld.proto.internal.DbUser;
 
 // DAO interface for users and profiles.
@@ -11,13 +11,17 @@ public interface UserDao {
 
   Optional<DbUser> getUserByEmail(String email);
 
+  Optional<DbUser> getUserByUsername(String username);
+
   DbUser createUser(DbUser user);
 
   DbUser updateUser(DbUser user);
 
-  Optional<Profile> getProfile(Optional<String> userId, String username);
+  boolean isFollowingUser(String followerUserId, String targetUserId);
 
-  Profile followProfile(String userId, String username);
+  void followUser(String followerUserId, String targetUserId);
 
-  Profile unfollowProfile(String userId, String username);
+  void unfollowUser(String followerUserId, String targetUserId);
+
+  ImmutableList<String> listFollowings(String userId);
 }

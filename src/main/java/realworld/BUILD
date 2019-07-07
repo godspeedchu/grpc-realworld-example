@@ -8,11 +8,11 @@ java_library(
     deps = [
         "@com_google_guava_guava//jar",
         "@com_google_inject_guice//jar",
-        "//src/main/java/realworld/api",
         "//src/main/java/realworld/core/dao/impl:module",
         "//src/main/java/realworld/infrastructure/concurrent",
         "//src/main/java/realworld/infrastructure/grpc",
         "//src/main/java/realworld/infrastructure/server",
+        "//src/main/java/realworld/processors",
     ],
 )
 

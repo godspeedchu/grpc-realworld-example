@@ -7,6 +7,7 @@ option java_outer_classname = "RealworldProto";
 import 'google/api/annotations.proto';
 import 'google/protobuf/empty.proto';
 import 'google/protobuf/timestamp.proto';
+import 'google/protobuf/wrappers.proto';
 
 package realworld.proto;
 
@@ -87,7 +88,7 @@ service RealworldService {
 
   rpc UpdateArticle(UpdateArticleRequest) returns (ArticleResponse) {
     option (google.api.http) = {
-      put: "/api/articles/{slug=*}"
+      put: "/api/articles/{article.slug=*}"
       body: "*"
     };
   }
@@ -130,7 +131,7 @@ service RealworldService {
   }
 
   /** === TAG APIS === */
-  rpc ListTags(google.protobuf.Empty) returns (TagsResponse) {
+  rpc ListTags(ListTagsRequest) returns (TagsResponse) {
     option (google.api.http) = {
       get: "/api/tags"
     };
@@ -139,19 +140,19 @@ service RealworldService {
 
 /** === RESOURCES === */
 message User {
-  string email = 1;
-  string username = 2;
-  string bio = 3;
-  string image = 4;
-  string password = 5;
+  google.protobuf.StringValue email = 1;
+  google.protobuf.StringValue username = 2;
+  google.protobuf.StringValue password = 5;
+  google.protobuf.StringValue bio = 3;
+  google.protobuf.StringValue image = 4;
   string token = 6;
 }
 
 message Profile {
   string username = 1;
-  string bio = 2;
-  string image = 3;
-  bool following = 4;
+  google.protobuf.StringValue bio = 2;
+  google.protobuf.StringValue image = 3;
+  google.protobuf.BoolValue following = 4;
 }
 
 message Article {
@@ -162,8 +163,8 @@ message Article {
   repeated string tag_list = 5;
   google.protobuf.Timestamp created_at = 6;
   google.protobuf.Timestamp updated_at = 7;
-  bool favorited = 8;
-  int32 favorites_count = 9;
+  google.protobuf.BoolValue favorited = 8;
+  google.protobuf.Int32Value favorites_count = 9;
   Profile author = 10;
 }
 
@@ -209,21 +210,21 @@ message ProfileResponse {
 }
 
 message ListArticlesRequest {
-  string tag = 1;
-  string author = 2;
-  string favorited = 3;
-  int32 limit = 4;
-  int32 offset = 5;
+  google.protobuf.StringValue tag = 1;
+  google.protobuf.StringValue author = 2;
+  google.protobuf.StringValue favorited = 3;
+  google.protobuf.Int32Value limit = 4;
+  google.protobuf.Int32Value offset = 5;
 }
 
 message FeedArticlesRequest {
-  int32 limit = 1;
-  int32 offset = 2;
+  google.protobuf.Int32Value limit = 1;
+  google.protobuf.Int32Value offset = 2;
 }
 
 message ArticlesResponse {
   repeated Article articles = 1;
-  int32 articles_count = 2;
+  google.protobuf.Int32Value articles_size = 2 [json_name = "articlesCount"];
 }
 
 message GetArticleRequest {
@@ -274,6 +275,9 @@ message CommentsResponse {
 message DeleteCommentRequest {
   string slug = 1;
   string id = 2;
+}
+
+message ListTagsRequest {
 }
 
 message TagsResponse {

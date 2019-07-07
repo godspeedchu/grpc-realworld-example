@@ -1,0 +1,23 @@
+type: google.api.Service
+config_version: 3
+
+#
+# Name of the service configuration.
+#
+name: realworld.endpoints.[YOUR GCP PROJECT ID].cloud.goog
+
+#
+# API title to appear in the user interface (Google Cloud Console).
+#
+title: Realworld gRPC API
+apis:
+- name: realworld.proto.RealworldService
+
+#
+# API usage restrictions.
+#
+usage:
+  rules:
+  # All methods can be called without an API Key.
+  - selector: "*"
+    allow_unregistered_calls: true

@@ -1,6 +1,7 @@
 package realworld.core.dao.impl;
 
 import com.google.common.collect.ImmutableList;
+import com.google.inject.Inject;
 import com.google.protobuf.Timestamp;
 import java.time.Instant;
 import java.util.HashMap;
@@ -9,18 +10,27 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import realworld.core.dao.ArticleDao;
-import realworld.proto.Comment;
+import realworld.core.dao.UserDao;
 import realworld.proto.internal.DbArticle;
+import realworld.proto.internal.DbComment;
 
 // A naive DAO implementation for articles, comments, and tags based on in-memory data structure.
 final class ArticleDaoImpl implements ArticleDao {
 
   private final Map<String, DbArticle> articles = new HashMap(); // ID -> article
   private final Map<String, String> articleIdBySlug = new HashMap(); // slug -> article ID
-  private final Map<String, HashSet<String>> articlesByAuthor = new HashMap(); // author user ID -> article IDs
-  private final Map<String, HashSet<String>> articlesByTag = new HashMap(); // tag -> article IDs
-  private final Map<String, HashSet<String>> favoritedUsers = new HashMap(); // article ID -> favorited user IDs
+  private final Map<String, Set<String>> articlesByAuthor = new HashMap(); // author user ID -> article IDs
+  private final Map<String, Set<String>> articlesByTag = new HashMap(); // tag -> article IDs
+  private final Map<String, Set<String>> favoritedUsers = new HashMap(); // article ID -> favorited user IDs
+  private final Map<String, Map<String, DbComment>> comments = new HashMap(); // article ID -> (comment ID -> comments)
+  private final UserDao userDao;
+
+  @Inject
+  ArticleDaoImpl(UserDao userDao) {
+    this.userDao = userDao;
+  }
 
   @Override
   public Optional<DbArticle> getArticle(String articleId) {
@@ -82,6 +92,14 @@ final class ArticleDaoImpl implements ArticleDao {
   }
 
   @Override
+  public boolean isFavoriteArticle(String userId, String articleId) {
+    if (!articles.containsKey(articleId)) {
+      throw new RuntimeException("article doesn't exist.");
+    }
+    return favoritedUsers.get(articleId).contains(userId);
+  }
+
+  @Override
   public DbArticle favoriteArticle(String userId, String articleId) {
     if (!articles.containsKey(articleId)) {
       throw new RuntimeException("article doesn't exist.");
@@ -100,22 +118,57 @@ final class ArticleDaoImpl implements ArticleDao {
   }
 
   @Override
+  public int getArticleFavoriteCount(String articleId) {
+    if (!articles.containsKey(articleId)) {
+      throw new RuntimeException("article doesn't exist.");
+    }
+    return favoritedUsers.get(articleId).size();
+  }
+
+  @Override
   public ImmutableList<DbArticle> listArticles() {
+    return ImmutableList.copyOf(articles.values());
+  }
+
+  @Override
+  public ImmutableList<DbArticle> feedArticles(String userId) {
+    ImmutableList.Builder<DbArticle> builder = ImmutableList.builder();
+    
+    userDao.listFollowings(userId)
+      .forEach(authorId -> builder.addAll(
+            articlesByAuthor.get(authorId).stream().map(articles::get).collect(Collectors.toList())));
+    return builder.build();
+  }
+
+  @Override
+  public DbComment createComment(String articleId, DbComment comment) {
+    Instant now = Instant.now();
+    Timestamp nowTs = Timestamp.newBuilder()
+      .setSeconds(now.getEpochSecond())
+      .setNanos(now.getNano())
+      .build();
+    comment = comment.toBuilder()
+      .setId(UUID.randomUUID().toString())
+      .setCreatedAt(nowTs)
+      .setUpdatedAt(nowTs)
+      .build();
+    comments.get(articleId).put(comment.getId(), comment);
+    return comment;
+  }
+
+  @Override
+  public ImmutableList<DbComment> listComments(String articleId) {
+    if (comments.containsKey(articleId)) {
+      return ImmutableList.copyOf(comments.get(articleId).values());
+    }
     return ImmutableList.of();
   }
 
   @Override
-  public Comment createComment(String slug, Comment comment) {
-    return Comment.getDefaultInstance();
-  }
-
-  @Override
-  public ImmutableList<Comment> listComments(String slug) {
-    return ImmutableList.of();
-  }
-
-  @Override
-  public void deleteComment(String slug, String id) {
+  public void deleteComment(String articleId, String commentId) {
+    if (comments.containsKey(articleId)) {
+      comments.get(articleId).remove(commentId);
+    }
   }
 
   @Override
@@ -143,6 +196,8 @@ final class ArticleDaoImpl implements ArticleDao {
         }
         articlesByTag.get(tag).add(dbArticle.getId());
       });
+
+    comments.put(dbArticle.getId(), new HashMap<String, DbComment>());
   }
 
   private void deleteDbArticle(String articleId) {
@@ -153,5 +208,6 @@ final class ArticleDaoImpl implements ArticleDao {
     articlesByAuthor.get(storedArticle.getAuthorId()).remove(storedArticle.getId());
     storedArticle.getTagListList()
       .forEach(tag -> articlesByTag.get(tag).remove(storedArticle.getId()));
+    comments.remove(storedArticle.getId());
   }
 }
