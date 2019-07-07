@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "realworld.proto.internal";
+option java_outer_classname = "JwtProto";
+
+import 'google/protobuf/timestamp.proto';
+
+package realworld.proto.internal;
+
+message JsonWebToken {
+  string subject = 1;
+  google.protobuf.Timestamp expire_at = 2;
+}
