@@ -24,15 +24,15 @@ java_grpc_library(
     deps = [":realworld_java_proto"],
 )
 
-genrule(
-    name = "realworld_descriptorset",
-    srcs = glob(["*.proto"]) + [
-        "@googleapis//:google/api/annotations.proto",
-        "@com_google_protobuf//:empty_proto",
-    ],
-    outs = ["realworld.pb"],
-    cmd = "$(location @com_google_protobuf//:protoc) " +
-          "--descriptor_set_out=$@ " +
-          "--include_imports --include_source_info $(SRCS)",
-    tools = ["@com_google_protobuf//:protoc"],
-)
+# genrule(
+#     name = "realworld_descriptorset",
+#     srcs = glob(["*.proto"]) + [
+#         "@googleapis//:google/api/annotations.proto",
+#         "@com_google_protobuf//:empty_proto",
+#     ],
+#     outs = ["realworld.pb"],
+#     cmd = "$(location @com_google_protobuf//:protoc) " +
+#           "--descriptor_set_out=$@ " +
+#           "--include_imports --include_source_info $(SRCS)",
+#     tools = ["@com_google_protobuf//:protoc"],
+# )
