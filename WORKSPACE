@@ -1,13 +1,67 @@
 workspace(name = "depot")
 
-# TODO(godspeedchu): Remove this once protobuf release catches up
-load("//:protobuf_deps.bzl", "protobuf_deps")
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+load("//:repositories.bzl", "depot_repositories")
 
-protobuf_deps()
+depot_repositories()
+
+http_archive(
+    name = "rules_jvm_external",
+    sha256 = "735602f50813eb2ea93ca3f5e43b1959bd80b213b836a07a62a29d757670b77b",
+    strip_prefix = "rules_jvm_external-4.4.2",
+    url = "https://github.com/bazelbuild/rules_jvm_external/archive/refs/tags/4.4.2.zip",
+)
+
+load("@rules_jvm_external//:defs.bzl", "maven_install")
+load("@rules_jvm_external//:specs.bzl", "maven")
+load("@io_grpc_grpc_java//:repositories.bzl", "IO_GRPC_GRPC_JAVA_ARTIFACTS")
+load("@io_grpc_grpc_java//:repositories.bzl", "IO_GRPC_GRPC_JAVA_OVERRIDE_TARGETS")
+
+maven_install(
+    artifacts = [
+        "aopalliance:aopalliance:1.0",
+        "com.google.auto.value:auto-value:1.9",
+	"com.google.auto.value:auto-value-annotations:1.9",
+	"com.google.guava:guava:31.0.1-jre",
+	"com.google.inject:guice:4.2.3",
+	"javax.inject:javax.inject:1",
+	maven.artifact(
+            "com.google.truth",
+            "truth",
+            "1.0.1",
+            testonly = True,
+        ),
+	maven.artifact(
+            "junit",
+            "junit",
+            "4.13.2",
+            testonly = True,
+        ),
+	maven.artifact(
+            "org.mockito",
+            "mockito-all",
+            "1.10.19",
+            testonly = True,
+        ),
+    ] + IO_GRPC_GRPC_JAVA_ARTIFACTS,
+    generate_compat_repositories = True,
+    override_targets = IO_GRPC_GRPC_JAVA_OVERRIDE_TARGETS,
+    repositories = [
+        "https://repo.maven.apache.org/maven2/",
+    ],
+)
+
+load("@maven//:compat.bzl", "compat_repositories")
+
+compat_repositories()
 
 load("//:repositories.bzl", "depot_repositories")
 
 depot_repositories()
+
+load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
+
+protobuf_deps()
 
 load("@io_grpc_grpc_java//:repositories.bzl", "grpc_java_repositories")
 

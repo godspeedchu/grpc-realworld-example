@@ -3,6 +3,7 @@ package(default_visibility = ["//visibility:public"])
 java_library(
     name = "tests",
     srcs = glob(["*.java"]),
+    testonly = 1,
     deps = [
         "//src/main/realworld/proto:realworld_java_proto",
         "//src/main/realworld/proto/internal:internal_java_proto",
@@ -13,9 +14,9 @@ java_library(
         "@com_google_inject_guice//jar",
         "@com_google_protobuf//:protobuf_java",
         "@io_grpc_grpc_java//core",
-        "@junit//jar",
-        "@mockito//jar",
-        "@truth//jar",
+        "@junit_junit//jar",
+        "@org_mockito_mockito_all//jar",
+        "@com_google_truth_truth//jar",
     ],
 )
 

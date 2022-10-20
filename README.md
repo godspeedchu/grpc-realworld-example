@@ -1,5 +1,6 @@
 # ![RealWorld Example App](logo.png)
 
+[![Latest release](https://img.shields.io/github/v/release/godspeedchu/grpc-realworld-example.svg)](https://github.com/godspeedchu/grpc-realworld-example/releases/latest)
 [![Build Status](https://travis-ci.org/godspeedchu/grpc-realworld-example.svg?branch=master)](https://travis-ci.org/godspeedchu/grpc-realworld-example)
 
 > ### gRPC + Google Cloud ESP codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://github.com/gothinkster/realworld) spec and API.
@@ -23,11 +24,15 @@ For more information on how to this works with other frontends/backends, head ov
 
 [Cloud Endpoints](https://cloud.google.com/endpoints/) is an API Management framework to develop, deploy and manage APIs on Google Cloud Platform. [Extensible Service Proxy (ESP)](https://cloud.google.com/endpoints/docs/frameworks/frameworks-extensible-service-proxy) is an API relay/control plane offered by Cloud Endpoints for OpenAPI and gRPC. For gRPC, ESP provides JSON/REST to gRPC/Protobuf transcoding which means one can build a pure gRPC API and have ESP translate it into REST API with minimum configurations.
 
+This repo uses bazel to build, last working version bazel 4.0.0
+
 # Getting started
 
 > Start the gRPC server to listen at port 8080
 
+```shell
 bazel run src/main/java/realworld:realworldserver
+```
 
 > Re-generate the API descriptor set (optional)
 
