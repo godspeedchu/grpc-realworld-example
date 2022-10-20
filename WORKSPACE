@@ -69,31 +69,20 @@ grpc_java_repositories()
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
-# Download the rules_docker repository at release v0.7.0
 http_archive(
-    name = "io_bazel_rules_docker",
-    sha256 = "aed1c249d4ec8f703edddf35cbe9dfaca0b5f5ea6e4cd9e83e99f3b0d1136c3d",
-    strip_prefix = "rules_docker-0.7.0",
-    urls = ["https://github.com/bazelbuild/rules_docker/archive/v0.7.0.tar.gz"],
+    name = "io_bazel_rules_go",
+    sha256 = "6f111c57fd50baf5b8ee9d63024874dd2a014b069426156c55adbf6d3d22cb7b",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_go/releases/download/v0.25.0/rules_go-v0.25.0.tar.gz",
+        "https://github.com/bazelbuild/rules_go/releases/download/v0.25.0/rules_go-v0.25.0.tar.gz",
+    ],
 )
 
-# OPTIONAL: Call this to override the default docker toolchain configuration.
-# This call should be placed BEFORE the call to "container_repositories" below
-# to actually override the default toolchain configuration.
-# Note this is only required if you actually want to call
-# docker_toolchain_configure with a custom attr; please read the toolchains
-# docs in /toolchains/docker/ before blindly adding this to your WORKSPACE.
+load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_dependencies")
 
-load("@io_bazel_rules_docker//toolchains/docker:toolchain.bzl",
-    docker_toolchain_configure="toolchain_configure"
-)
-docker_toolchain_configure(
-  name = "docker_config",
-  # OPTIONAL: Path to a directory which has a custom docker client config.json.
-  # See https://docs.docker.com/engine/reference/commandline/cli/#configuration-files
-  # for more details.
-  client_config="/path/to/docker/client/config",
-)
+go_rules_dependencies()
+
+go_register_toolchains(version = "1.15.5")
 
 # This is NOT needed when going through the language lang_image
 # "repositories" function(s).
@@ -102,6 +91,10 @@ load(
     container_repositories = "repositories",
 )
 container_repositories()
+
+load("@io_bazel_rules_docker//repositories:deps.bzl", container_deps = "deps")
+
+container_deps()
 
 load(
     "@io_bazel_rules_docker//container:container.bzl",

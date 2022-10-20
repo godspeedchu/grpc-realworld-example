@@ -24,7 +24,7 @@ For more information on how to this works with other frontends/backends, head ov
 
 [Cloud Endpoints](https://cloud.google.com/endpoints/) is an API Management framework to develop, deploy and manage APIs on Google Cloud Platform. [Extensible Service Proxy (ESP)](https://cloud.google.com/endpoints/docs/frameworks/frameworks-extensible-service-proxy) is an API relay/control plane offered by Cloud Endpoints for OpenAPI and gRPC. For gRPC, ESP provides JSON/REST to gRPC/Protobuf transcoding which means one can build a pure gRPC API and have ESP translate it into REST API with minimum configurations.
 
-This repo uses bazel to build, last working version bazel 4.0.0
+This repo uses bazel to build, latest working version is 5.3.2.
 
 # Getting started
 

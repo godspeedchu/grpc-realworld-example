@@ -14,9 +14,6 @@ build --verbose_failures
 build --spawn_strategy=standalone --genrule_strategy=standalone
 test --test_strategy=standalone
 
-# This is due to dependency compatibility issue
-build --incompatible_restrict_string_escapes=false
-
 # Below this line, .travis.yml will cat the default bazelrc.
 # This is needed so Bazel starts with the base workspace in its
 # package path.
